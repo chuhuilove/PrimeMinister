@@ -3,15 +3,12 @@ package com.chuhui.primeminister.db.datastru;
 
 /**
  * RedisADList
- * <p>
- * 吾辈既务斯业,便当专心用功;
- * 以后名扬四海,根据即在年轻.
  *
  * @author: 纯阳子
  * @Date: 2019/6/28 0028
- * @Description: redis中通用双向链表的实现
+ * @Description: redis中通用双向链表的实现 adlist.h he adlist.c
  */
-public class RedisADList<E> {
+public class RedisList<E> {
 
 
     private ListNode<E> head;
@@ -33,7 +30,7 @@ public class RedisADList<E> {
         }
     }
 
-    public RedisADList() {
+    public RedisList() {
         head = null;
         tail = null;
         len = 0;
@@ -53,7 +50,7 @@ public class RedisADList<E> {
     }
 
     /**
-     * 将元素添加到{@link RedisADList#head}的前面,作为新的{@link RedisADList#head}
+     * 将元素添加到{@link RedisList#head}的前面,作为新的{@link RedisList#head}
      *
      * @param value
      */
@@ -76,7 +73,7 @@ public class RedisADList<E> {
     }
 
     /**
-     * 添加节点到链表尾,取代现有的{@link RedisADList#tail},添加的节点会成为新的{@link RedisADList#tail}
+     * 添加节点到链表尾,取代现有的{@link RedisList#tail},添加的节点会成为新的{@link RedisList#tail}
      *
      * @param value
      */
@@ -99,7 +96,7 @@ public class RedisADList<E> {
     public static void main(String[] args) {
 
 
-        RedisADList<Integer> list1 = new RedisADList();
+        RedisList<Integer> list1 = new RedisList();
 
         list1.listAddNodeHead(6);
         list1.listAddNodeHead(7);
@@ -112,7 +109,7 @@ public class RedisADList<E> {
         System.err.println(list1);
         System.err.println(list1);
 
-        RedisADList<Integer> list2 = new RedisADList();
+        RedisList<Integer> list2 = new RedisList();
 
         list2.listAddNodeTail(5);
         list2.listAddNodeTail(4);
@@ -120,7 +117,7 @@ public class RedisADList<E> {
         list2.listAddNodeTail(2);
         list2.listAddNodeTail(1);
 
-        RedisADList list = RedisADList.listJoin(list1, list2);
+        RedisList list = RedisList.listJoin(list1, list2);
 
         System.err.println(list);
         System.err.println(list);
@@ -143,9 +140,9 @@ public class RedisADList<E> {
         return clone(this);
     }
 
-    private RedisADList<E> clone(RedisADList<E> list) {
+    private RedisList<E> clone(RedisList<E> list) {
 
-        RedisADList<E> clone = new RedisADList<>();
+        RedisList<E> clone = new RedisList<>();
         clone.head = new ListNode<>(head.value);
         clone.tail = new ListNode<>(tail.value);
 
@@ -159,7 +156,7 @@ public class RedisADList<E> {
         return clone;
     }
 
-    RedisADList listDup(RedisADList list) {
+    RedisList listDup(RedisList list) {
         return clone(list);
     }
 
@@ -170,7 +167,7 @@ public class RedisADList<E> {
      * @param o
      * @return
      */
-    public static RedisADList listJoin(RedisADList l, RedisADList o) {
+    public static RedisList listJoin(RedisList l, RedisList o) {
 
         o.head.prev = l.tail;
         l.tail.next = o.head;
