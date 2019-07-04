@@ -1,4 +1,4 @@
-package com.chuhui.primeminister.db.datastru;
+package com.chuhui.primeminister.db.datastruct;
 
 /**
  * SkipList

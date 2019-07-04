@@ -1,11 +1,12 @@
-package com.chuhui.primeminister.db.datastru;
+package com.chuhui.primeminister.db.datastruct;
 
 /**
  * RedisDict
- *
+ * redis中的hash表实现.
+ * redis中的hash表本质上采用链表进行存储
  * @author: 纯阳子
  * @Date: 2019/6/28 0028
- * @Description: redis中的hash表实现
+ * @Description:
  */
 public class RedisDict<E, V> {
 
@@ -41,7 +42,6 @@ public class RedisDict<E, V> {
 
 
     public DictEntry dictAddRaw(E key, DictEntry existing) {
-
 
         if (dictIsRehashing()) {
             dictRehashStep();
@@ -104,6 +104,7 @@ public class RedisDict<E, V> {
             return DICT_ERR;
         }
         //TODO 扩展hash表
+        return 0;
     }
 
 

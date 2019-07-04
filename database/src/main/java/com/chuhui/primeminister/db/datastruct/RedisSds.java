@@ -1,4 +1,4 @@
-package com.chuhui.primeminister.db.datastru;
+package com.chuhui.primeminister.db.datastruct;
 
 /**
  * RedisSds
@@ -9,6 +9,9 @@ package com.chuhui.primeminister.db.datastru;
  */
 final public class RedisSds implements Comparable<RedisSds>{
 
+
+
+    String
 
 
     @Override
