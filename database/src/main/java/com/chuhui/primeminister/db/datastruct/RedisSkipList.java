@@ -21,22 +21,6 @@ public class RedisSkipList {
     }
 
 
-    public ZSkipList zslCreate() {
-        int j;
-        ZSkipList zsl = new ZSkipList();
-
-        zsl.level = 1;
-        zsl.length = 0;
-        zsl.header = zslCreateNode(ZSKIPLIST_MAXLEVEL, 0, null);
-        for (j = 0; j < ZSKIPLIST_MAXLEVEL; j++) {
-            zsl.header.level[j].forward = null;
-            zsl.header.level[j].span = 0;
-        }
-        zsl.header.backward = null;
-        zsl.tail = null;
-        return zsl;
-    }
-
 
 
 
@@ -54,11 +38,9 @@ public class RedisSkipList {
         private long span;
     }
 
-    static class ZSkipList {
-        private ZSkipListNode header;
-        private ZSkipListNode tail;
-        private long length;
-        private int level;
-    }
 
+    private ZSkipListNode header;
+    private ZSkipListNode tail;
+    private long length;
+    private int level;
 }

@@ -11,7 +11,6 @@ final public class RedisSds implements Comparable<RedisSds>{
 
 
 
-    String
 
 
     @Override
