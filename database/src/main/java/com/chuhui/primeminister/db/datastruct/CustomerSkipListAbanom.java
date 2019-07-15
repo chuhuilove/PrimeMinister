@@ -1,9 +1,6 @@
 package com.chuhui.primeminister.db.datastruct;
 
-import java.util.AbstractList;
 import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -13,7 +10,8 @@ import java.util.concurrent.ThreadLocalRandom;
  * @Date: 2019/7/15 0015
  * @Description:TODO
  */
-public class CustomerSkipList<E extends Comparable<? super E>> implements Comparator<E> {
+@Deprecated
+public class CustomerSkipListAbanom<E extends Comparable<? super E>> implements Comparator<E> {
 //https://blog.csdn.net/moakun/article/details/79997037
     /**
      * 当前最高层级
@@ -31,7 +29,7 @@ public class CustomerSkipList<E extends Comparable<? super E>> implements Compar
     static final int ZSKIPLIST_MAXLEVEL = 64;
     static final float ZSKIPLIST_P = 0.25f;
 
-    public CustomerSkipList() {
+    public CustomerSkipListAbanom() {
 
         level = 1;
         size = 0;
@@ -215,7 +213,7 @@ public class CustomerSkipList<E extends Comparable<? super E>> implements Compar
 
     public static void main(String[] args) {
 
-        CustomerSkipList<Integer> skipList = new CustomerSkipList<>();
+        CustomerSkipListAbanom<Integer> skipList = new CustomerSkipListAbanom<>();
 
     }
 

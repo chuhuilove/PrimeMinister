@@ -9,6 +9,9 @@ package com.chuhui.primeminister.db.datastruct;
  */
 public class RedisSkipList {
 
+    /**
+     * 2019年7月16日06:02:55 根本不明白其中的意思,抄了也是白抄
+     * */
 
     static final int ZSKIPLIST_MAXLEVEL = 64;
 
