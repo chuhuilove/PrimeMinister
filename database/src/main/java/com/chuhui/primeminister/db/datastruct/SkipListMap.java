@@ -198,39 +198,39 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
                 : comparator.compare((K) k1, (K) k2);
     }
 
+    transient Set<Entry<K, V>> entrySet;
+
 
     @Override
     public Set<Entry<K, V>> entrySet() {
 
 
 
-        return null;
+        Set<Map.Entry<K,V>> es;
+        return (es = entrySet) == null ? (entrySet = new  EntrySet<>(this)) : es;
+
     }
 
 
-      static class EntrySet<K1, V1> extends AbstractSet<Map.Entry<K1, V1>> {
+    final class EntrySet<K1, V1> extends AbstractSet<Map.Entry<K, V>> {
 
         private SkipListMap map;
 
-        public EntrySet(SkipListMap  map) {
+        public EntrySet(SkipListMap map) {
             this.map = map;
         }
 
         @Override
-        public Iterator<Entry<K1, V1>> iterator() {
-
-            // 做迭代器
-            // 真的能获得不少东西啊
-            // 2019年7月16日20:45:05
-            // 好好捣鼓一下迭代器
-            //
-            Node  p =  map.head;
+        public Iterator<Entry<K, V>> iterator() {
+            Node p = map.head;
 
             while (p != null) {
                 p = p.down;
             }
-            return new SkiplistIterator(p);
 
+            SkipListIterator iterator = new SkipListIterator(p);
+
+            return iterator;
         }
 
         @Override
@@ -239,15 +239,12 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
         }
     }
 
-    Node<K,V> getHead(){
-        return head;
-    }
 
-   static  class SkiplistIterator implements Iterator<Node> {
+    final class SkipListIterator implements Iterator<Entry<K, V>> {
 
-        Node  node;
+        Node node;
 
-        public SkiplistIterator(Node  node) {
+        public SkipListIterator(Node node) {
             this.node = node;
         }
 
@@ -257,13 +254,13 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
         }
 
         @Override
-        public Node<K, V> next() {
+        public Entry<K, V> next() {
             return node.right;
         }
     }
 
 
-   static  class Node<K, V> implements Entry<K, V> {
+    static class Node<K, V> implements Entry<K, V> {
         byte flag;
 
         K key;
@@ -310,6 +307,28 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
         map.put(5, 4);
         map.put(4, 5);
         map.put(6, 6);
+
+
+        Set<Entry<Integer, Integer>> entries = map.entrySet();
+
+        for (Entry<Integer, Integer> set : entries) {
+
+            System.err.println(set.getKey() + "----->" + set.getValue());
+        }
+
+
+//        Map<Integer, Integer> hashMap = new HashMap<>();
+//
+//        for (int i = 0; i < 100; i++) {
+//            hashMap.put(i, i);
+//        }
+//
+//        Set<Entry<Integer, Integer>> entries = hashMap.entrySet();
+//
+//        for (Entry<Integer, Integer> set : entries) {
+//
+//            System.err.println(set.getKey() + "----->" + set.getValue());
+//        }
 
 
 //        Map<Integer,Integer> map=new TreeMap<>();
