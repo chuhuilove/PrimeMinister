@@ -14,13 +14,15 @@ import java.util.Random;
  */
 public class SkipList<E extends Comparable<? super E>> {
 
-    // https://blog.csdn.net/moakun/article/details/79997037
 
     /**
      * 该跳跃表实现,来自于:https://blog.csdn.net/moakun/article/details/79997037
      * 没测试,感觉好像缺点什么.
      * 2019年7月16日07:06:39
      * 完成java版redis的任务.任重道远啊
+     * 2019年7月16日19:24:01
+     * 测试,可以..不能用跳跃表实现lits接口
+     * list有一个set(int index,E element) 接口,使用跳跃表无法实现
      */
 
     private SkipListNode<E> head, tail;
@@ -56,7 +58,7 @@ public class SkipList<E extends Comparable<? super E>> {
         while (flag) {
 
             while (p.right.key != SkipListNode.TAIL_KEY && p.right.key <= key) {
-                p.right = p;
+                p = p.right;
             }
 
             if (p.down != null) {
@@ -109,7 +111,7 @@ public class SkipList<E extends Comparable<? super E>> {
             /**
              * 如果超出了高度,则需要重新建一个顶层
              */
-            if (currentLevel > listLevel) {
+            if (currentLevel >= listLevel) {
 
                 listLevel++;
                 SkipListNode<E> p1 = new SkipListNode<>(SkipListNode.HEAD_KEY, null);
