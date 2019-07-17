@@ -184,7 +184,7 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
         boolean flag = true;
         while (flag) {
 
-            while (p.right.flag != TAIL_KEY && compare(p.right.key, key) <=0) {
+            while (p.right.flag != TAIL_KEY && compare(p.right.key, key) <= 0) {
                 p = p.right;
             }
 
@@ -205,6 +205,7 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
                 : comparator.compare((K) k1, (K) k2);
     }
 
+
     transient Set<Entry<K, V>> entrySet;
 
 
@@ -218,6 +219,73 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
         return null;
     }
 
+    @Override
+    public V remove(Object key) {
+        Node<K, V> findNode = search(key);
+
+        if (checkIsFlageNode(findNode)) {
+            // key 不存在
+            return null;
+        }
+        /**
+         * 删除分为两种情况:
+         * 1. 节点的up指针上没有任何东西,即一个普通的节点
+         *
+         *      获取到这个节点之后,调整左右指针即可
+         *
+         * 2. 节点的up指针上有节点,该节点是一个标志节点
+         *
+         *     除调整左右指针外,还需要考虑up指针上的东西
+         *
+         *
+         */
+        //
+        // 如果这个节点上面有东西,则连带一块删除
+
+
+        // 只是一个子节点而已,上面没有任何东西
+        if (findNode.up == null) {
+            /**
+             * findNode右侧的节点的左指针,指向findNode左侧的节点
+             * findNode左侧的节点的右指针,指向findNode右侧的节点
+             */
+            findNode.right.left = findNode.left;
+            findNode.left.right = findNode.right;
+
+            return findNode.value;
+        }
+
+
+        V value=findNode.value;
+
+        // 删除,需要好好测试一下下
+        do {
+
+            findNode.right.left = findNode.left;
+            findNode.left.right = findNode.right;
+
+            findNode=findNode.up;
+
+        }while (findNode.up!=null);
+
+
+
+        return value;
+    }
+
+
+    /**
+     * 判断节点是否为flag节点
+     *
+     * @param node
+     * @return
+     */
+    boolean checkIsFlageNode(Node<K, V> node) {
+
+        return (node.flag == HEAD_KEY || node.flag == TAIL_KEY);
+    }
+
+
     /**
      * 还有很多问题出现.暂时不能急着迭代
      *
@@ -225,7 +293,6 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
      */
     @Override
     public Set<K> keySet() {
-
 
 
         HashMap hashMap = new HashMap();
@@ -246,7 +313,7 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
     }
 
 
-    static class KetSetIterator<E> implements  Iterator<E>{
+    static class KetSetIterator<E> implements Iterator<E> {
 
         @Override
         public boolean hasNext() {
@@ -258,6 +325,7 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
             return null;
         }
     }
+
     static class Node<K, V> implements Entry<K, V> {
         byte flag;
 
@@ -304,14 +372,11 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
 
         int count = 1000;
 
-        Random random = new Random();
 
-        int nextInt;
         while (count >= 0) {
-            nextInt = random.nextInt();
 
-            map.put("cyzi"+nextInt, count--);
-            map.put("cyzi"+nextInt, count*100);
+            map.put("cyzi" + count, count--);
+            map.put("cyzi" + count, count * 100);
         }
 
         Node<String, Integer> head = map.getHead();
@@ -325,20 +390,26 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
 
         }
 
+
+        //todo 需要测试一下删除
+
+
+
+
         // 证明一个数组是有序的
 
 
-        byte tail=Byte.MAX_VALUE;
+        byte tail = Byte.MAX_VALUE;
         while (head.right.flag != tail) {
 
             Node<String, Integer> dataNode = head.right;
 
-            if(dataNode.key==null && dataNode.value==null){
+            if (dataNode.key == null && dataNode.value == null) {
                 System.err.println("全是null");
                 System.err.println("全是null");
                 System.err.println("全是null");
             }
-                System.err.println(dataNode.key + "--->" + dataNode.value);
+            System.err.println(dataNode.key + "--->" + dataNode.value);
 
 
             head = dataNode;
