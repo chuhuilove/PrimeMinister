@@ -1,12 +1,7 @@
 package com.chuhui.primeminister.db.datastruct;
 
-import sun.reflect.generics.tree.Tree;
-
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.function.Consumer;
 
 /**
  * SkipList
@@ -210,6 +205,8 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
                 : comparator.compare((K) k1, (K) k2);
     }
 
+    transient Set<Entry<K, V>> entrySet;
+
 
     /**
      * 还有很多问题出现.暂时不能急着迭代
@@ -230,6 +227,7 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
     public Set<K> keySet() {
 
 
+
         HashMap hashMap = new HashMap();
 
         TreeMap treeMap = new TreeMap();
@@ -248,30 +246,6 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
     }
 
 
-
-    static class KeySet<E> extends AbstractSet<E>{
-
-
-        private SkipListMap map;
-
-
-        @Override
-        public Iterator<E> iterator() {
-
-
-
-
-
-
-            return null;
-        }
-
-        @Override
-        public int size() {
-            return 0;
-        }
-    }
-
     static class KetSetIterator<E> implements  Iterator<E>{
 
         @Override
@@ -284,70 +258,6 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
             return null;
         }
     }
-
-
-
-
-    /*
-        static class EntrySet<K1, V1> extends AbstractSet<Map.Entry<K1, V1>> {
-
-            private SkipListMap map;
-
-            public EntrySet(SkipListMap  map) {
-                this.map = map;
-            }
-
-            @Override
-            public Iterator<Entry<K1, V1>> iterator() {
-
-                // 做迭代器
-                // 真的能获得不少东西啊
-                // 2019年7月16日20:45:05
-                // 好好捣鼓一下迭代器
-                //
-                Node  p =  map.head;
-
-                while (p != null) {
-                    p = p.down;
-                }
-                return new SkiplistIterator(p);
-
-            }
-
-            @Override
-            public int size() {
-                return map.size();
-            }
-        }
-    */
-    Node<K, V> getHead() {
-        return head;
-    }
-
-    static class SkiplistIterator implements Iterator<Node> {
-
-        Node node;
-
-        public SkiplistIterator(Node node) {
-            this.node = node;
-        }
-
-        @Override
-        public boolean hasNext() {
-            return node.right == null;
-        }
-
-        @Override
-        public Node next() {
-            return null;
-        }
-
-//        public Node<K, V> next() {
-//            return node.right;
-//        }
-    }
-
-
     static class Node<K, V> implements Entry<K, V> {
         byte flag;
 
@@ -382,7 +292,7 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
         }
     }
 
-    public Node<K, V> getHeade() {
+    public Node<K, V> getHead() {
         return head;
     }
 
@@ -400,8 +310,8 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
         while (count >= 0) {
             nextInt = random.nextInt();
 
-            map.put("xcc"+nextInt, count--);
-            map.put("xcc"+nextInt, count*100);
+            map.put("cyzi"+nextInt, count--);
+            map.put("cyzi"+nextInt, count*100);
         }
 
         Node<String, Integer> head = map.getHead();
@@ -433,31 +343,8 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
 
             head = dataNode;
 
-
-
         }
 
-
-//        Map<Integer,Integer> map=new TreeMap<>();
-
-
-//        Scanner sc=new Scanner(System.in);
-//
-//        String str;
-//        while (true){
-//
-//            str=sc.next();
-//
-//
-//            str=str.replace("吗","");
-//            str=str.replace("?","!");
-//            str=str.replace("?","!");
-//            System.err.println(str);
-//
-//        }
-
-
     }
-
 
 }
