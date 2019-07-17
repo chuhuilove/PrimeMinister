@@ -1,8 +1,12 @@
 package com.chuhui.primeminister.db.datastruct;
 
+import sun.reflect.generics.tree.Tree;
+
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Consumer;
 
 /**
  * SkipList
@@ -34,6 +38,8 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
 
     static final float PROBABILITY = 0.5f;
 
+    private final Random random = new Random();
+
     public SkipListMap(Comparator<? super K> comparator) {
         this.comparator = comparator;
         init();
@@ -64,6 +70,12 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
 
 
     @Override
+    public V get(Object key) {
+        Node<K, V> search = search(key);
+        return search.value;
+    }
+
+    @Override
     public V put(K key, V value) {
 
 
@@ -87,7 +99,7 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
         int currentLevel = 0;
 
         // 抛硬币
-        while (ThreadLocalRandom.current().nextFloat() < PROBABILITY) {
+        while (random.nextFloat() < PROBABILITY) {
 
 
             /**
@@ -177,7 +189,7 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
         boolean flag = true;
         while (flag) {
 
-            while (p.right.flag != TAIL_KEY && compare(p.right.key, key) < 0) {
+            while (p.right.flag != TAIL_KEY && compare(p.right.key, key) <=0) {
                 p = p.right;
             }
 
@@ -199,55 +211,124 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
     }
 
 
+    /**
+     * 还有很多问题出现.暂时不能急着迭代
+     *
+     * @return
+     */
     @Override
     public Set<Entry<K, V>> entrySet() {
-
-
-
         return null;
     }
 
+    /**
+     * 还有很多问题出现.暂时不能急着迭代
+     *
+     * @return
+     */
+    @Override
+    public Set<K> keySet() {
 
-      static class EntrySet<K1, V1> extends AbstractSet<Map.Entry<K1, V1>> {
+
+        HashMap hashMap = new HashMap();
+
+        TreeMap treeMap = new TreeMap();
+
+        ConcurrentHashMap conHashMap = new ConcurrentHashMap();
+
+        LinkedHashMap linkHashMap = new LinkedHashMap();
+
+        Node p = head;
+
+        while (p != null) {
+            p = p.down;
+        }
+
+        return super.keySet();
+    }
+
+
+
+    static class KeySet<E> extends AbstractSet<E>{
+
 
         private SkipListMap map;
 
-        public EntrySet(SkipListMap  map) {
-            this.map = map;
-        }
 
         @Override
-        public Iterator<Entry<K1, V1>> iterator() {
+        public Iterator<E> iterator() {
 
-            // 做迭代器
-            // 真的能获得不少东西啊
-            // 2019年7月16日20:45:05
-            // 好好捣鼓一下迭代器
-            //
-            Node  p =  map.head;
 
-            while (p != null) {
-                p = p.down;
-            }
-            return new SkiplistIterator(p);
 
+
+
+
+            return null;
         }
 
         @Override
         public int size() {
-            return map.size();
+            return 0;
         }
     }
 
-    Node<K,V> getHead(){
+    static class KetSetIterator<E> implements  Iterator<E>{
+
+        @Override
+        public boolean hasNext() {
+            return false;
+        }
+
+        @Override
+        public E next() {
+            return null;
+        }
+    }
+
+
+
+
+    /*
+        static class EntrySet<K1, V1> extends AbstractSet<Map.Entry<K1, V1>> {
+
+            private SkipListMap map;
+
+            public EntrySet(SkipListMap  map) {
+                this.map = map;
+            }
+
+            @Override
+            public Iterator<Entry<K1, V1>> iterator() {
+
+                // 做迭代器
+                // 真的能获得不少东西啊
+                // 2019年7月16日20:45:05
+                // 好好捣鼓一下迭代器
+                //
+                Node  p =  map.head;
+
+                while (p != null) {
+                    p = p.down;
+                }
+                return new SkiplistIterator(p);
+
+            }
+
+            @Override
+            public int size() {
+                return map.size();
+            }
+        }
+    */
+    Node<K, V> getHead() {
         return head;
     }
 
-   static  class SkiplistIterator implements Iterator<Node> {
+    static class SkiplistIterator implements Iterator<Node> {
 
-        Node  node;
+        Node node;
 
-        public SkiplistIterator(Node  node) {
+        public SkiplistIterator(Node node) {
             this.node = node;
         }
 
@@ -257,13 +338,17 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
         }
 
         @Override
-        public Node<K, V> next() {
-            return node.right;
+        public Node next() {
+            return null;
         }
+
+//        public Node<K, V> next() {
+//            return node.right;
+//        }
     }
 
 
-   static  class Node<K, V> implements Entry<K, V> {
+    static class Node<K, V> implements Entry<K, V> {
         byte flag;
 
         K key;
@@ -297,19 +382,60 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
         }
     }
 
+    public Node<K, V> getHeade() {
+        return head;
+    }
+
 
     public static void main(String[] args) {
 
+        SkipListMap<String, Integer> map = new SkipListMap<>();
 
-        SkipListMap<Integer, Integer> map = new SkipListMap<>();
+
+        int count = 1000;
+
+        Random random = new Random();
+
+        int nextInt;
+        while (count >= 0) {
+            nextInt = random.nextInt();
+
+            map.put("xcc"+nextInt, count--);
+            map.put("xcc"+nextInt, count*100);
+        }
+
+        Node<String, Integer> head = map.getHead();
 
 
-        map.put(1, 1);
-        map.put(2, 2);
-        map.put(3, 3);
-        map.put(5, 4);
-        map.put(4, 5);
-        map.put(6, 6);
+        while (true) {
+            if (head.down == null) {
+                break;
+            }
+            head = head.down;
+
+        }
+
+        // 证明一个数组是有序的
+
+
+        byte tail=Byte.MAX_VALUE;
+        while (head.right.flag != tail) {
+
+            Node<String, Integer> dataNode = head.right;
+
+            if(dataNode.key==null && dataNode.value==null){
+                System.err.println("全是null");
+                System.err.println("全是null");
+                System.err.println("全是null");
+            }
+                System.err.println(dataNode.key + "--->" + dataNode.value);
+
+
+            head = dataNode;
+
+
+
+        }
 
 
 //        Map<Integer,Integer> map=new TreeMap<>();
