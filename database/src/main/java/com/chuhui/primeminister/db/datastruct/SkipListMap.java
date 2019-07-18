@@ -1,7 +1,8 @@
 package com.chuhui.primeminister.db.datastruct;
 
+
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+
 
 /**
  * SkipList
@@ -9,8 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * 吾辈既务斯业,便当专心用功;
  * 以后名扬四海,根据即在年轻.
  * 一个有序的,不重复的,内部使用skip list实现的map
- * <p>
- * 如果将其改造为一个list,会有很大的局限性
+ * 此map不是线程安全的
  *
  * @author: 纯阳子
  * @Date: 2019/7/16
@@ -18,27 +18,29 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
 
-
-    static final byte HEAD_KEY = Byte.MIN_VALUE;
-
-    static final byte TAIL_KEY = Byte.MAX_VALUE;
+    private static final byte HEAD_KEY = Byte.MIN_VALUE;
+    private static final byte TAIL_KEY = Byte.MAX_VALUE;
 
 
     private Node<K, V> head, tail;
 
-    final Comparator<? super K> comparator;
+    private final Comparator<? super K> comparator;
 
+    /**
+     * map的大小
+     */
     private int size;
+    /**
+     * skip list 层数
+     */
     private int listLevel;
 
-    static final float PROBABILITY = 0.5f;
+    /**
+     * 抛硬币的比较因子
+     */
+    private static final float PROBABILITY = 0.5f;
 
     private final Random random = new Random();
-
-    public SkipListMap(Comparator<? super K> comparator) {
-        this.comparator = comparator;
-        init();
-    }
 
     public SkipListMap() {
 
@@ -46,41 +48,51 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
         init();
     }
 
+    public SkipListMap(Comparator<? super K> comparator) {
+        this.comparator = comparator;
+        init();
+    }
+
+
     @Override
     public int size() {
         return size;
     }
 
-    private void init() {
-
-        head = new Node<>();
-        tail = new Node<>();
-        head.right = tail;
-        tail.left = head;
-        head.flag = HEAD_KEY;
-        tail.flag = TAIL_KEY;
-
-
+    @Override
+    public boolean containsKey(Object key) {
+        Node<K, V> searchRes = findNode(key);
+        return searchRes.key == null;
     }
-
 
     @Override
     public V get(Object key) {
-        Node<K, V> search = search(key);
+        Node<K, V> search = findNode(key);
         return search.value;
     }
 
     @Override
+    public void putAll(Map<? extends K, ? extends V> m) {
+
+        Set<? extends Entry<? extends K, ? extends V>> entries = m.entrySet();
+
+        if (entries.size() > 0) {
+
+            for (Entry<? extends K, ? extends V> entry : m.entrySet()) {
+                put(entry.getKey(), entry.getValue());
+            }
+        }
+    }
+
+
+    @Override
     public V put(K key, V value) {
 
+        Node<K, V> searchNode = findNode(key);
 
-        Node<K, V> searchNode = search(key);
-
-        /**
-         * 创建Node对象的时候,只有head和tail才会被赋值,其他情况下,默认为0
-         */
+        /* 创建Node对象的时候,只有head和tail的flag才会被赋值,其他情况下,默认为0*/
         if (searchNode.flag != HEAD_KEY && searchNode.flag != TAIL_KEY && compare(searchNode.key, key) == 0) {
-            // 只更新
+            // 更新
             searchNode.value = value;
             return value;
         }
@@ -90,23 +102,27 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
         backlist(searchNode, inserNode);
 
 
-        // 当前所在层级是0
+        // 从最底层开始创建索引,即第0层
         int currentLevel = 0;
 
         // 抛硬币
         while (random.nextFloat() < PROBABILITY) {
-
 
             /**
              * 如果超出了高度,则需要重新建一个顶层
              */
             if (currentLevel >= listLevel) {
 
+                /*
+                 * 创建新的head和tail
+                 *
+                 */
                 listLevel++;
                 Node<K, V> p1 = new Node<>();
                 p1.flag = HEAD_KEY;
                 Node<K, V> p2 = new Node<>();
                 p2.flag = TAIL_KEY;
+
                 horizontalLink(p1, p2);
                 vertiacallLink(p1, head);
                 vertiacallLink(p2, tail);
@@ -126,22 +142,196 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
             inserNode = eSkipListNode;
 
             currentLevel++;
+        }
+        size++;
+        return value;
+    }
 
+    @Override
+    public V remove(Object key) {
+        // 获取到的findNode是第0层
+        Node<K, V> findNode = findNode(key);
+
+        if (checkIsFlageNode(findNode)) {
+            /* key 不存在*/
+            throw new NoSuchElementException("This key is not exist");
         }
 
-        size++;
+        Node<K, V> topNode = findNode.up;
 
+        while (topNode != null) {
+            topNode.right.left = topNode.left;
+            topNode.left.right = topNode.right;
+            topNode = topNode.up;
+        }
+
+        findNode.right.left = findNode.left;
+        findNode.left.right = findNode.right;
+
+
+        if (findNode.up != null) {
+            Node<K, V> headPoint = this.head;
+            Node<K, V> tailPoint = this.tail;
+
+            while (headPoint != null) {
+
+                if (headPoint.right.flag == TAIL_KEY) {
+                    // 这一层,不要了..
+                    listLevel--;
+                    head = headPoint.down;
+                    tail = tailPoint.down;
+                    head.up = null;
+                    tail.up = null;
+                    headPoint = head;
+                    tailPoint = tail;
+                    // 最后一层
+                    if (headPoint.down == null) {
+                        break;
+                    }
+                } else {
+                    headPoint = headPoint.down;
+                }
+            }
+        }
+
+        V value = findNode.value;
+        size--;
         return value;
-
     }
 
 
+    /**
+     * @return
+     */
+    @Override
+    public Set<Entry<K, V>> entrySet() {
+
+        // 返回的是一个迭代器
+
+
+        return null;
+    }
+
+    /**
+     * 还有很多问题出现.暂时不能急着迭代
+     *
+     * @return
+     */
+    @Override
+    public Set<K> keySet() {
+        return new SkipListInsideSet<>(this);
+    }
+
+
+    /**
+     * 内部set集合
+     * TODO 这个该如何实现
+     * @param <K>
+     */
+    class SkipListInsideSet<K> extends AbstractSet<K> {
+
+        private SkipListMap<K, V> map;
+
+
+        SkipListInsideSet(SkipListMap map) {
+            this.map = map;
+        }
+
+        @Override
+        public Iterator<K> iterator() {
+
+
+            return null;
+        }
+
+        @Override
+        public int size() {
+            return map.size;
+        }
+    }
+
+
+    /**
+     * 内部迭代器实现
+     * TODO 这个该怎么实现
+     * @param <K>
+     */
+    class SkipListInsideIterator<K> implements Iterator<K> {
+
+        private SkipListMap<K, V> map;
+
+        SkipListInsideIterator(SkipListMap<K, V> map) {
+            this.map = map;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return false;
+        }
+
+        @Override
+        public K next() {
+            return null;
+        }
+    }
+
+    static class Node<K, V> implements Entry<K, V> {
+        byte flag;
+
+        K key;
+        V value;
+
+        Node<K, V> up, down, left, right;
+
+
+        Node() {
+        }
+
+        Node(K key, V value) {
+            this.key = key;
+            this.value = value;
+        }
+
+        @Override
+        public K getKey() {
+            return key;
+        }
+
+        @Override
+        public V getValue() {
+            return value;
+        }
+
+        @Override
+        public V setValue(V value) {
+            this.value = value;
+            return this.value;
+        }
+    }
+
+
+    private void init() {
+
+        head = new Node<>();
+        tail = new Node<>();
+        head.right = tail;
+        tail.left = head;
+        head.flag = HEAD_KEY;
+        tail.flag = TAIL_KEY;
+    }
+
+
+    /**
+     * 将node2插入到node1的后面
+     *
+     * @param node1
+     * @param node2
+     */
     private void backlist(Node<K, V> node1, Node<K, V> node2) {
         node2.left = node1;
         node2.right = node1.right;
         node1.right.left = node2;
         node1.right = node2;
-
     }
 
     /**
@@ -169,16 +359,13 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
     }
 
 
-    @Override
-    public boolean containsKey(Object key) {
-
-        Node<K, V> searchRes = search(key);
-        return searchRes.key == null;
-
-    }
-
-
-    private Node<K, V> search(Object key) {
+    /**
+     * 根据key从表中获取节点
+     *
+     * @param key
+     * @return
+     */
+    private Node<K, V> findNode(Object key) {
         Node<K, V> p = head;
 
         boolean flag = true;
@@ -206,110 +393,15 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
     }
 
 
-    transient Set<Entry<K, V>> entrySet;
-
-
-    /**
-     * 还有很多问题出现.暂时不能急着迭代
-     *
-     * @return
-     */
-    @Override
-    public Set<Entry<K, V>> entrySet() {
-        return null;
-    }
-
-    @Override
-    public V remove(Object key) {
-        Node<K, V> findNode = search(key);
-
-        if (checkIsFlageNode(findNode)) {
-            // key 不存在
-            return null;
-        }
-        /**
-         * 删除分为两种情况:
-         * 1. 节点的up指针上没有任何东西,即一个普通的节点
-         *
-         *      获取到这个节点之后,调整左右指针即可
-         *
-         * 2. 节点的up指针上有节点,该节点是一个标志节点
-         *
-         *     除调整左右指针外,还需要考虑up指针上的东西
-         *
-         *
-         */
-        //
-        // 如果这个节点上面有东西,则连带一块删除
-
-
-        // 只是一个子节点而已,上面没有任何东西
-        if (findNode.up == null) {
-            /**
-             * findNode右侧的节点的左指针,指向findNode左侧的节点
-             * findNode左侧的节点的右指针,指向findNode右侧的节点
-             */
-            findNode.right.left = findNode.left;
-            findNode.left.right = findNode.right;
-
-            return findNode.value;
-        }
-
-
-        V value=findNode.value;
-
-        // 删除,需要好好测试一下下
-        do {
-
-            findNode.right.left = findNode.left;
-            findNode.left.right = findNode.right;
-
-            findNode=findNode.up;
-
-        }while (findNode.up!=null);
-
-
-
-        return value;
-    }
-
-
     /**
      * 判断节点是否为flag节点
      *
      * @param node
      * @return
      */
-    boolean checkIsFlageNode(Node<K, V> node) {
+    private boolean checkIsFlageNode(Node<K, V> node) {
 
         return (node.flag == HEAD_KEY || node.flag == TAIL_KEY);
-    }
-
-
-    /**
-     * 还有很多问题出现.暂时不能急着迭代
-     *
-     * @return
-     */
-    @Override
-    public Set<K> keySet() {
-
-
-        HashMap hashMap = new HashMap();
-
-        TreeMap treeMap = new TreeMap();
-
-        ConcurrentHashMap conHashMap = new ConcurrentHashMap();
-
-        LinkedHashMap linkHashMap = new LinkedHashMap();
-
-        Node p = head;
-
-        while (p != null) {
-            p = p.down;
-        }
-
-        return super.keySet();
     }
 
 
@@ -326,60 +418,25 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
         }
     }
 
-    static class Node<K, V> implements Entry<K, V> {
-        byte flag;
-
-        K key;
-        V value;
-
-        Node<K, V> up, down, left, right;
-
-
-        public Node() {
-        }
-
-        public Node(K key, V value) {
-            this.key = key;
-            this.value = value;
-        }
-
-        @Override
-        public K getKey() {
-            return key;
-        }
-
-        @Override
-        public V getValue() {
-            return value;
-        }
-
-        @Override
-        public V setValue(V value) {
-            this.value = value;
-            return this.value;
-        }
-    }
-
-    public Node<K, V> getHead() {
-        return head;
-    }
-
 
     public static void main(String[] args) {
 
-        SkipListMap<String, Integer> map = new SkipListMap<>();
+
+        SkipListMap<Integer, Integer> map = new SkipListMap<>();
 
 
-        int count = 1000;
+        int count = 100;
 
 
         while (count >= 0) {
-
-            map.put("cyzi" + count, count--);
-            map.put("cyzi" + count, count * 100);
+            map.put(count, (count-- * 100));
         }
 
-        Node<String, Integer> head = map.getHead();
+
+        Set<Integer> integerSet = map.keySet();
+
+
+        Node<Integer, Integer> head = map.head;
 
 
         while (true) {
@@ -391,15 +448,105 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
         }
 
 
-        //todo 需要测试一下删除
+        // 获取到所有带有up指针的节点
+        List<Node<Integer, Integer>> ups = new LinkedList<>();
+
+        while (head.right.flag != SkipListMap.TAIL_KEY) {
+
+            Node<Integer, Integer> dataNode = head.right;
+
+            if (dataNode.up != null) {
+                ups.add(dataNode);
+            }
+            head = dataNode;
+        }
 
 
+        // 开始删除
+
+        int size = map.size;
+
+        for (Node node : ups) {
 
 
-        // 证明一个数组是有序的
+            map.remove(node.key);
+        }
 
 
+        int i = size - ups.size();
+
+
+        if (i == map.size && map.listLevel == 0) {
+
+            System.err.println("全部删除成功,准备二次删除");
+
+        }
+
+
+        count = 10000;
+
+
+        while (count >= 0) {
+            map.put(count, (count-- * 100));
+        }
+
+        head = map.head;
+
+        while (true) {
+            if (head.down == null) {
+                break;
+            }
+            head = head.down;
+
+        }
+
+
+        // 获取到所有带有up指针的节点
+        ups = new LinkedList<>();
+
+        while (head.right.flag != SkipListMap.TAIL_KEY) {
+
+            Node<Integer, Integer> dataNode = head.right;
+
+            if (dataNode.up != null) {
+                ups.add(dataNode);
+            }
+            head = dataNode;
+        }
+
+
+        // 开始删除
+
+        size = map.size;
+
+        Collections.shuffle(ups);
+
+        for (Node node : ups) {
+
+
+            map.remove(node.key);
+        }
+
+
+        i = size - ups.size();
+
+
+        if (i == map.size && map.listLevel == 0) {
+
+            System.err.println("全部删除成功");
+
+        }
+
+    }
+
+    /**
+     * 迭代每一个
+     */
+    static void iterator() {
         byte tail = Byte.MAX_VALUE;
+
+        Node<String, Integer> head = null;
+
         while (head.right.flag != tail) {
 
             Node<String, Integer> dataNode = head.right;
@@ -411,10 +558,10 @@ public class SkipListMap<K, V> extends AbstractMap<K, V> implements Map<K, V> {
             }
             System.err.println(dataNode.key + "--->" + dataNode.value);
 
-
             head = dataNode;
 
         }
+
 
     }
 
