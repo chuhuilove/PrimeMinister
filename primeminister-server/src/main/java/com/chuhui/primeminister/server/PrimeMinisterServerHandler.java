@@ -21,11 +21,6 @@ public class PrimeMinisterServerHandler extends SimpleChannelInboundHandler<Stri
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
-
-    }
-
-    @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         LOG.info("msg:{}", msg);
 
         Channel channel = ctx.channel();
@@ -36,5 +31,11 @@ public class PrimeMinisterServerHandler extends SimpleChannelInboundHandler<Stri
     @Override
     public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
         LOG.info("a client connected...");
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        super.exceptionCaught(ctx, cause);
+        ctx.channel().close();
     }
 }
