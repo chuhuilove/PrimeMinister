@@ -10,8 +10,9 @@ import java.io.InputStream;
 import static com.chuhui.primeminister.constant.Constants.DEFAULT_CONFIG_FILENAME;
 
 /**
- * Boot
+ * PrimeMinisterServerMain
  *
+ * PrimeMinisterServer main class
  * @author: cyzi
  * @Date: 2019/9/2 0002
  * @Description:TODO
@@ -35,7 +36,7 @@ public class PrimeMinisterServerMain {
 
         // resolve configure file
         ServerConfig config = ServerConfig.getInstance();
-        if (args.length == 1) {
+        if (args != null && args.length == 1) {
             config.parse(args[0]);
         } else {
             InputStream stream = PrimeMinisterServerMain.class.getClassLoader().getResourceAsStream(DEFAULT_CONFIG_FILENAME);
