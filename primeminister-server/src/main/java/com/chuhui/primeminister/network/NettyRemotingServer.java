@@ -1,22 +1,12 @@
 package com.chuhui.primeminister.network;
 
-import com.chuhui.primeminister.server.PrimeMinisterServerHandler;
 import com.chuhui.primeminister.server.PrimeMinisterServerMain;
 import com.chuhui.primeminister.server.ServerConfig;
-import io.netty.bootstrap.Bootstrap;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import io.netty.handler.codec.LengthFieldPrepender;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
-import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,16 +48,7 @@ public class NettyRemotingServer extends AbstractNettyRemoting {
             bootstrap = new ServerBootstrap();
             bootstrap.group(bossGroup, workerGroup)
                     .channel(NioServerSocketChannel.class)
-                    .childHandler(new ChannelInitializer<SocketChannel>() {
-                        @Override
-                        protected void initChannel(SocketChannel ch) throws Exception {
-                            ChannelPipeline pipeline = ch.pipeline();
-                            pipeline.addLast(new LengthFieldPrepender(4));
-                            pipeline.addLast(new StringDecoder(CharsetUtil.UTF_8));
-                            pipeline.addLast(new StringEncoder(CharsetUtil.UTF_8));
-                            pipeline.addLast("primeMinisterServerHandler", new PrimeMinisterServerHandler());
-                        }
-                    });
+                    .childHandler(new NettyRemotingInitializer());
 
             int port = serverConfig.getConfigureModel().getServer().getPort();
             String host = serverConfig.getConfigureModel().getServer().getHost();
