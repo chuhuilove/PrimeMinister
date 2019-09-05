@@ -33,34 +33,33 @@ public class DefaultNettyClient implements NettyClientInterface {
 
     @Override
     public void connection() {
-        EventLoopGroup workGroup = new NioEventLoopGroup();
+        EventLoopGroup eventGroup = new NioEventLoopGroup();
 
         try {
 
 
             Bootstrap b = new Bootstrap();
-            b.group(workGroup)
+            b.group(eventGroup)
                     .channel(NioSocketChannel.class)
-                    .handler(new NettyRemotingInitializer());
+                    .handler(new DefaultNettyClientInitializer());
 
             InetSocketAddress socketAddress = new InetSocketAddress(host, port);
 
             Channel channel = b.connect(socketAddress).sync().channel();
-
-            BufferedReader inputStreamReader = new BufferedReader(new InputStreamReader(System.in));
-
-            for (; ; ) {
-                System.err.println("please input data:");
-                channel.writeAndFlush(inputStreamReader.readLine() + System.lineSeparator());
-            }
-
-
+            channel.closeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
         } finally {
-            workGroup.shutdownGracefully();
+            eventGroup.shutdownGracefully();
         }
     }
+
+    public static void main(String[] args) {
+
+
+        DefaultNettyClient defaultNettyClient = new DefaultNettyClient("127.0.0.1", 13225);
+        defaultNettyClient.connection();
+    }
+
+
 }

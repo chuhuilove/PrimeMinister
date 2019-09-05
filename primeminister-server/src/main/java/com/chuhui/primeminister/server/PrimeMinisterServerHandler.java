@@ -1,5 +1,6 @@
 package com.chuhui.primeminister.server;
 
+import com.chuhui.primeminister.constant.enums.DB_COMMAND_ENUMS;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.Channel;
@@ -8,6 +9,8 @@ import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.UUID;
 
 /**
  * PrimeMinisterServerHandler
@@ -30,8 +33,14 @@ public class PrimeMinisterServerHandler extends SimpleChannelInboundHandler<Byte
     protected void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
         LOG.info("msg:{}",   msg.toString(CharsetUtil.UTF_8));
 
-        Channel channel = ctx.channel();
-        channel.writeAndFlush("from server message:" + msg + System.lineSeparator());
+        //TODO 暂时先不考虑 google protobuf的问题..最重要的是将协议整明白
+        //
+        ctx.writeAndFlush(Unpooled.copiedBuffer(("<PMDB>from server data:"+ UUID.randomUUID().toString() +"</PMDB>").getBytes()));
+
+        // 命令的存储,使用枚举
+        DB_COMMAND_ENUMS set = DB_COMMAND_ENUMS.valueOf("set");
+
+
     }
 
 

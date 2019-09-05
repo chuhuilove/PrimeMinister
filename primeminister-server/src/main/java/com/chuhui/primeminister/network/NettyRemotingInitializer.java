@@ -14,6 +14,9 @@ import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 
+import static com.chuhui.primeminister.constant.Constants.PMDBBUF;
+import static com.chuhui.primeminister.constant.Constants.RESERVEPMDBBUF;
+
 /**
  * NettyRemotingInitializer
  *
@@ -26,25 +29,17 @@ public class NettyRemotingInitializer extends ChannelInitializer<SocketChannel> 
     /**
      * 帧最大长度,64K
      */
-    private static final int  FRAME_MAX_LENGTH=64*1024;
-    private static final String DELIMITER="<PMDB>";
-    private static final String RESERVE_DELIMITER="</PMDB>";
-
-
-
-
+    private static final int FRAME_MAX_LENGTH = 64 * 1024;
 
 
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
 
-        ByteBuf pmdbBuf = Unpooled.copiedBuffer(DELIMITER.getBytes());
-        ByteBuf reservePmdbBuf = Unpooled.copiedBuffer(RESERVE_DELIMITER.getBytes());
-
         ChannelPipeline pipeline = ch.pipeline();
         //TODO 阅读LengthFieldBasedFrameDecoder
-        pipeline.addLast("in ",new LengthFieldBasedFrameDecoder(FRAME_MAX_LENGTH,))
-        pipeline.addLast("in DelimiterBasedFrameDecoder <PMDB>",new DelimiterBasedFrameDecoder(FRAME_MAX_LENGTH,true,pmdbBuf,reservePmdbBuf));
+//        pipeline.addLast("in ",new LengthFieldBasedFrameDecoder(FRAME_MAX_LENGTH,))
+        pipeline.addLast("in DelimiterBasedFrameDecoder <PMDB>", new DelimiterBasedFrameDecoder(FRAME_MAX_LENGTH, true, PMDBBUF, RESERVEPMDBBUF));
+
         pipeline.addLast("in primeMinisterServerHandler", new PrimeMinisterServerHandler());
 
     }
