@@ -1,9 +1,12 @@
 package com.chuhui.primeminister;
 
+import redis.clients.jedis.Jedis;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.UUID;
 
 /**
  * RedisClient
@@ -17,23 +20,13 @@ public class RedisClient {
 
     public static void main(String[] args) {
 
-        try( Socket socket=new Socket("118.24.141.172",8000)) {
 
-            for(;;) {
-                OutputStream outputStream = socket.getOutputStream();
-                outputStream.write("woaini".getBytes());
+        Jedis jedis=new Jedis("xxx.xx",7002);
 
-                InputStream inputStream = socket.getInputStream();
+        for (int i = 101; i < 200; i++) {
 
-                byte[] readBytes = new byte[10];
+            jedis.set("cyzi"+(i+1),UUID.randomUUID().toString());
 
-                inputStream.read(readBytes);
-
-                System.err.println("data:" + new String(readBytes, "UTF-8"));
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
 
 

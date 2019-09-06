@@ -25,5 +25,16 @@
         </plugins>
     </build>
 
+    <dependencies>
+
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>${jedis.version}</version>
+        </dependency>
+    </dependencies>
+
+
+
 
 </project>
