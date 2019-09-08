@@ -39,8 +39,6 @@ public class PrimeMinisterServerHandler extends SimpleChannelInboundHandler<Byte
 
         // 命令的存储,使用枚举
         DB_COMMAND_ENUMS set = DB_COMMAND_ENUMS.valueOf("set");
-
-
     }
 
 

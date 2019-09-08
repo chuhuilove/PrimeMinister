@@ -1,4 +1,4 @@
-package com.chuhui.primeminister;
+package com.chuhui.primeminister.customerredisclient;
 
 import redis.clients.jedis.Jedis;
 
