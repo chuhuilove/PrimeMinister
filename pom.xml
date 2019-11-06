@@ -27,6 +27,19 @@
         <slf4j-api.version>1.7.9</slf4j-api.version>
     </properties>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 
     <dependencies>
 
@@ -47,10 +60,6 @@
             <artifactId>protobuf-java</artifactId>
             <version>${google-protobuf.version}</version>
         </dependency>
-
-
-
-
 
 
         <!-- Junit -->
@@ -109,10 +118,17 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>2.5</version>
-
         </dependency>
 
+        <!--jline-->
+
+        <dependency>
+            <groupId>jline</groupId>
+            <artifactId>jline</artifactId>
+            <version>2.13</version>
+        </dependency>
 
     </dependencies>
+
 
 </project>

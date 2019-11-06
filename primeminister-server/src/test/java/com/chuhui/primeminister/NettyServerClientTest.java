@@ -17,17 +17,17 @@ public class NettyServerClientTest {
     private NettyClientInterface client;
 
 
-    @Before
-    public void initliazer() {
-        client=new DefaultNettyClient("127.0.0.1",13225);
-    }
-
-
-    @Test
-    public void connectToServer() {
-        client.connection();
-
-    }
+//    @Before
+//    public void initliazer() {
+//        client=new DefaultNettyClient("127.0.0.1",13225);
+//    }
+//
+//
+//    @Test
+//    public void connectToServer() {
+//        client.connection();
+//
+//    }
 
 
 }
