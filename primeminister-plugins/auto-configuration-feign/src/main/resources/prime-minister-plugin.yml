@@ -1,0 +1,14 @@
+
+
+
+
+
+
+
+pluginName: feign1.0
+definedPlugins:
+    - com.chuhui.primeminister.plugins.feign.FeignPrimeMinisterPlugin
+
+
+
+

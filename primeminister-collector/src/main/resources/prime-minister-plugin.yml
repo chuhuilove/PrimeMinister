@@ -1,0 +1,14 @@
+
+
+
+
+
+
+
+pluginName: ttlThreadPool
+definedPlugins:
+    - com.chuhui.primeminister.plugins.feign.FeignPrimeMinisterPlugin
+
+
+
+

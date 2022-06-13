@@ -1,0 +1,9 @@
+primeminister:
+  core:
+    netty:
+      port: 12123
+      host: 127.0.0.1
+
+spring:
+  profiles:
+    active: dev

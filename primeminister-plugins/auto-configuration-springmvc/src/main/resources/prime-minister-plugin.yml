@@ -1,0 +1,13 @@
+
+
+
+
+
+
+
+pluginName: dispatcherServlet1.0
+definedPlugins:
+    - com.chuhui.primeminister.plugins.springmvc.DispatcherServletPrimeMinisterPlugin
+
+
+
