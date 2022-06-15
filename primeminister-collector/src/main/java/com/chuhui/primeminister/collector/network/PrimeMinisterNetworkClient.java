@@ -69,7 +69,7 @@ public class PrimeMinisterNetworkClient {
 
 
             ProtobufTest.TransClassName msgObj = ProtobufTest.TransClassName.newBuilder()
-                    .setMsgBytes(ByteString.copyFromUtf8("转换的类是:" + className))
+                    .setMsg("转换的类是:" + className)
                     .setAppName("cyzi-selffeature-trace-first")
                     .setDataTpe(ProtobufTest.DataType.transMsg)
                     .build();

@@ -16,6 +16,11 @@ public class TransClassNameClientHandler extends SimpleChannelInboundHandler<Pro
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, ProtobufTest.TransClassName msg) throws Exception {
-        System.err.println("client read from server msg is:"+msg.toString());
+
+        String appName = msg.getAppName();
+        ProtobufTest.DataType dataTpe = msg.getDataTpe();
+        String msg1 = msg.getMsg();
+
+        System.err.println("client read from server msg is,appName:"+appName+",dataTpe:"+dataTpe+",msg:"+msg1);
     }
 }
