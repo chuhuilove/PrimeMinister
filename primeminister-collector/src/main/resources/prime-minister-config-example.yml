@@ -1,0 +1,20 @@
+collectorName: example-name
+
+filter:
+    forbidTransformedClassNames:
+        -
+    forbidTransformedPackageNames:
+        -
+
+server:
+    port: 9500
+    host: 127.0.0.1
+    passWord: ZXCvbnm1
+
+appInfo:
+    name: 12345
+
+
+
+
+

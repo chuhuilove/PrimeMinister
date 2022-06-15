@@ -1,7 +1,8 @@
 package com.chuhui.primeminister.collector;
 
 import com.chuhui.primeminister.collector.plugin.AbstractPrimeMinisterPlugin;
-import com.chuhui.primeminister.collector.plugin.PrimeMinisterPluginDesc;
+import com.chuhui.primeminister.collector.config.PrimeMinisterPluginConfig;
+import com.chuhui.primeminister.collector.plugin.PrimeMinisterPluginSpecification;
 
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
@@ -23,19 +24,21 @@ public class PrimeMinisterAgent {
 
     public static void premain(String agentArgs, Instrumentation inst) {
 
-        final List<AbstractPrimeMinisterPlugin> supportedPlugins = loadSupportedPlugins();
-        inst.addTransformer(new PrimeMinisterClassFileTransformer(supportedPlugins),true);
+        final List<PrimeMinisterPluginSpecification> supportedPlugins = loadSupportedPlugins();
+
+        PrimeMinisterClassFileTransformer classFileTransformer = new PrimeMinisterClassFileTransformer(supportedPlugins);
+        inst.addTransformer(classFileTransformer);
     }
 
-    public static List<AbstractPrimeMinisterPlugin> loadSupportedPlugins() {
+    public static List<PrimeMinisterPluginSpecification> loadSupportedPlugins() {
 
         ClassLoader systemClassLoader = ClassLoader.getSystemClassLoader();
         try {
-            Enumeration<URL> fileResources = systemClassLoader.getResources(PrimeMinisterPluginDesc.PLUGIN_CONFIG_FILE_NAME);
-            Set<PrimeMinisterPluginDesc> loadedPlugins = new HashSet<>();
+            Enumeration<URL> fileResources = systemClassLoader.getResources(PrimeMinisterPluginConfig.PLUGIN_CONFIG_FILE_NAME);
+            Set<PrimeMinisterPluginConfig> loadedPlugins = new HashSet<>();
             while (fileResources.hasMoreElements()) {
                 URL url = fileResources.nextElement();
-                PrimeMinisterPluginDesc loadedPlugin = PrimeMinisterPluginDesc.load(url);
+                PrimeMinisterPluginConfig loadedPlugin = PrimeMinisterPluginConfig.load(url);
                 loadedPlugins.add(loadedPlugin);
             }
             return verifyAndInstantiation(loadedPlugins);
@@ -45,15 +48,15 @@ public class PrimeMinisterAgent {
         return null;
     }
 
-    static List<AbstractPrimeMinisterPlugin> verifyAndInstantiation(Set<PrimeMinisterPluginDesc> pluginDescs) {
-        List<AbstractPrimeMinisterPlugin> plugins = new LinkedList<>();
-        for (PrimeMinisterPluginDesc desc : pluginDescs) {
+    static List<PrimeMinisterPluginSpecification> verifyAndInstantiation(Set<PrimeMinisterPluginConfig> pluginDescs) {
+        List<PrimeMinisterPluginSpecification> plugins = new LinkedList<>();
+        for (PrimeMinisterPluginConfig desc : pluginDescs) {
             Set<String> definedPlugins = desc.getDefinedPlugins();
             for (String pluginClassName : definedPlugins) {
                 try {
                     Class<?> clazz = Class.forName(pluginClassName);
-                    if (AbstractPrimeMinisterPlugin.class.isAssignableFrom(clazz)) {
-                        plugins.add((AbstractPrimeMinisterPlugin) clazz.newInstance());
+                    if (PrimeMinisterPluginSpecification.class.isAssignableFrom(clazz)) {
+                        plugins.add((PrimeMinisterPluginSpecification) clazz.newInstance());
                     }
                 } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
                     e.printStackTrace();

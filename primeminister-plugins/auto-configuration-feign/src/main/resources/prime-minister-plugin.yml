@@ -7,7 +7,7 @@
 
 pluginName: feign1.0
 definedPlugins:
-    - com.chuhui.primeminister.plugins.feign.FeignPrimeMinisterPlugin
+    - com.chuhui.primeminister.plugins.feign.FeignClientDefaultPrimeMinisterPlugin
 
 
 

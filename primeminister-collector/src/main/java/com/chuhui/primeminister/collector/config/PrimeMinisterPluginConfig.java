@@ -1,4 +1,4 @@
-package com.chuhui.primeminister.collector.plugin;
+package com.chuhui.primeminister.collector.config;
 
 import org.yaml.snakeyaml.Yaml;
 
@@ -14,7 +14,7 @@ import java.util.Set;
  * @Date: 6/9/22
  * @Description:
  */
-public class PrimeMinisterPluginDesc {
+final public class PrimeMinisterPluginConfig {
 
     /**
      * 插件配置文件的名称
@@ -25,12 +25,12 @@ public class PrimeMinisterPluginDesc {
 
     private final Set<String> definedPlugins;
 
-    public PrimeMinisterPluginDesc(String pluginName, Set<String> definedPlugins) {
+    public PrimeMinisterPluginConfig(String pluginName, Set<String> definedPlugins) {
         this.pluginName = pluginName;
         this.definedPlugins = definedPlugins;
     }
 
-    public PrimeMinisterPluginDesc(PrimeMinisterPluginDescTemp descTemp) {
+    public PrimeMinisterPluginConfig(PrimeMinisterPluginDescTemp descTemp) {
         this(descTemp.getPluginName(), descTemp.getDefinedPlugins());
     }
 
@@ -51,7 +51,7 @@ public class PrimeMinisterPluginDesc {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        PrimeMinisterPluginDesc that = (PrimeMinisterPluginDesc) o;
+        PrimeMinisterPluginConfig that = (PrimeMinisterPluginConfig) o;
         return pluginName.equals(that.pluginName) &&
                 definedPlugins.equals(that.definedPlugins);
     }
@@ -61,10 +61,10 @@ public class PrimeMinisterPluginDesc {
         return Objects.hash(pluginName, definedPlugins);
     }
 
-    public static PrimeMinisterPluginDesc load(URL url) throws IOException {
+    public static PrimeMinisterPluginConfig load(URL url) throws IOException {
         Yaml yaml = new Yaml();
         PrimeMinisterPluginDescTemp loadedPlugin = yaml.loadAs(url.openStream(), PrimeMinisterPluginDescTemp.class);
-        return new PrimeMinisterPluginDesc(loadedPlugin);
+        return new PrimeMinisterPluginConfig(loadedPlugin);
     }
 
     public static class PrimeMinisterPluginDescTemp {

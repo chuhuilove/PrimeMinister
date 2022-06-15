@@ -1,12 +1,11 @@
 package com.chuhui.primeminister.plugins.springmvc;
 
-import com.chuhui.primeminister.collector.ClassDescInfoHolder;
-import com.chuhui.primeminister.collector.key.TraceKey;
-import com.chuhui.primeminister.collector.plugin.AbstractPrimeMinisterPlugin;
-import javassist.CtMethod;
+import com.chuhui.primeminister.collector.definition.TransformClassDefinition;
+import com.chuhui.primeminister.collector.interceptor.EnhancePoint;
+import com.chuhui.primeminister.collector.plugin.AbstractPrimeMinisterPluginSpecification;
+import com.chuhui.primeminister.collector.utils.CollectionsUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Enumeration;
+import java.util.List;
 
 /**
  * FrameworkServlet
@@ -15,47 +14,23 @@ import java.util.Enumeration;
  * @Date: 6/10/22
  * @Description:
  */
-public class DispatcherServletPrimeMinisterPlugin extends AbstractPrimeMinisterPlugin {
+public class DispatcherServletPrimeMinisterPlugin extends AbstractPrimeMinisterPluginSpecification {
 
     private String supportedClassName = "org.springframework.web.servlet.DispatcherServlet";
 
 
-    private String doDispatchMethod = "org.springframework.web.servlet.DispatcherServlet.doDispatch";
 
 
     @Override
-    public boolean isSupported(ClassDescInfoHolder classDescInfoHolder) {
-        return supportedClassName.equals(classDescInfoHolder.getClassName());
+    public List<EnhancePoint> interceptorPoints() {
+        return CollectionsUtils.newArrayList(new DispatcherServletDoDispatchMethodInterceptor());
     }
 
     @Override
-    protected boolean hasBefore(CtMethod method) {
-        return false;
+    protected boolean matchPlugin(TransformClassDefinition classDefinition) {
+        return supportedClassName.equals(classDefinition.getOriginalClassInfoHolder().getClassName());
     }
 
-    @Override
-    protected String beforeLogic(CtMethod method) {
-        return null;
-    }
 
-    @Override
-    protected boolean hasAfter(CtMethod method) {
-        return false;
-    }
-
-    @Override
-    protected String afterLogic(CtMethod method) {
-        return null;
-    }
-
-    public static void handleRequest(final HttpServletRequest request) {
-
-        //  这是有请求进来了
-        Enumeration headers = request.getHeaders(TraceKey.PRIME_MINISTER_COLLECTOR_UNIQUE_KEY);
-        while (headers.hasMoreElements()) {
-
-        }
-
-    }
 
 }

@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+
+option java_package="com.chuhui.primeminister.common.protocol.test";
+
+//option java_outer_classname = "InnerDataPacket";
+
+
+enum DataType{
+    logMsg=0;
+    transMsg=1;
+}
+
+message TransClassName {
+    string msg = 1;
+    string app_name = 2;
+    DataType dataTpe =3;
+}
+
+
+// 先不使用gRPC了

@@ -12,11 +12,6 @@
     <artifactId>primeminister-common</artifactId>
 
     <dependencies>
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-            <version>5.8.2</version>
-        </dependency>
 
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -39,5 +34,52 @@
         </dependency>
 
     </dependencies>
+
+    <build>
+
+
+        <extensions>
+            <extension>
+                <groupId>kr.motd.maven</groupId>
+                <artifactId>os-maven-plugin</artifactId>
+                <version>1.4.1.Final</version>
+            </extension>
+        </extensions>
+
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.xolstice.maven.plugins</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
+                <version>0.6.1</version>
+                <configuration>
+                    <protocExecutable>/Users/yunchu/opensoftware/protoc/bin/protoc</protocExecutable>
+                    <protoSourceRoot>${basedir}/src/main/proto</protoSourceRoot>
+                    <pluginId>PrimeMinister_Common</pluginId>
+                    <!--this is link https://www.xolstice.org/protobuf-maven-plugin/compile-mojo.html#protocExecutable-->
+<!--                    <protocArtifact>com.chuhui.primeminister.common.protocol</protocArtifact>-->
+<!--                    <outputDirectory>${basedir}/target/generated-sources/protobuf/java</outputDirectory>-->
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+<!--                            <goal>compile-custom</goal>-->
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+        </plugins>
+    </build>
 
 </project>

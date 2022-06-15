@@ -35,7 +35,8 @@ public abstract class AbstractMethodInterceptor implements MethodInterceptor {
                     continue;
                 }
 
-                if (behavior.getMethodInfo().isConstructor() || isSupported(definition, (CtConstructor) behavior)) {
+                // todo 这个地方怎么直接去调用构造器了呢?
+                if (behavior.getMethodInfo().isConstructor() && isSupported(definition, (CtConstructor) behavior)) {
                     supportedBehaviors.add(behavior);
                 }
             }

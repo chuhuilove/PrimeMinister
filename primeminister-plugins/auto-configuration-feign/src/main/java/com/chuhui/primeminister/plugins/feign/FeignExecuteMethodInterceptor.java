@@ -47,7 +47,7 @@ public class FeignExecuteMethodInterceptor extends AbstractMethodInterceptor {
     protected void setBehaviorLogic(TransformClassDefinition definition, CtBehavior behavior) {
         if(behavior instanceof CtMethod  && isSupported(definition,(CtMethod)behavior)){
 
-            String beforeLogic = String.format(METHOD_LOGIC_TEMPLATE, "com.chuhui.primeminister.plugins.feign.FeignMethodInterceptor.feignExecuteRequestLogic($1)");
+            String beforeLogic = String.format(METHOD_LOGIC_TEMPLATE, "com.chuhui.primeminister.plugins.feign.FeignExecuteMethodInterceptor.feignExecuteRequestLogic($1)");
             try {
                 behavior.insertBefore(beforeLogic);
                 System.err.println("插入的逻辑!!!!"+beforeLogic);

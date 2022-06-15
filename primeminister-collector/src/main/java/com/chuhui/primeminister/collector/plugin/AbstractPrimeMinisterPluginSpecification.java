@@ -59,7 +59,12 @@ public abstract class AbstractPrimeMinisterPluginSpecification implements PrimeM
         }
         customizationLogic(transformClassDefinition);
         try {
-            return transformClassDefinition.getCtClass().toBytecode();
+
+            if (ctClass.isModified()) {
+                classDescInfoHolder.getNetworkClient().sendMsg(classDescInfoHolder.getClassName());
+                return transformClassDefinition.getCtClass().toBytecode();
+            }
+
         } catch (IOException | CannotCompileException e) {
             e.printStackTrace();
         }
@@ -90,7 +95,6 @@ public abstract class AbstractPrimeMinisterPluginSpecification implements PrimeM
                 // 最后扩展方法
                 extendingInterceptor.extendingBehaviors(transformClassDefinition, ctClass);
             }
-
 
             if (interceptorPoint instanceof MethodInterceptor) {
                 MethodInterceptor methodInterceptor = (MethodInterceptor) interceptorPoint;

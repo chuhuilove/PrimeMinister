@@ -5,9 +5,9 @@
 
 
 
-pluginName: ttlThreadPool
+pluginName: alibaba-ttl
 definedPlugins:
-    - com.chuhui.primeminister.plugins.feign.FeignPrimeMinisterPlugin
+    - com.chuhui.primeminister.collector.plugin.ttl.AlibabaTTLPrimeMinisterPlugin
 
 
 
