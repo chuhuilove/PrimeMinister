@@ -1,0 +1,13 @@
+
+
+
+
+
+
+
+pluginName: logback-LoggingEvent-for-PrimeMinister
+definedPlugins:
+    - com.chuhui.primeminister.plugins.springmvc.LoggingEventPrimeMinisterPlugin
+
+
+

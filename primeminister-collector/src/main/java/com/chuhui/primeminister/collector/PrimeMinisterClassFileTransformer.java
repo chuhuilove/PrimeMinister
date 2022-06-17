@@ -3,7 +3,6 @@ package com.chuhui.primeminister.collector;
 import com.chuhui.primeminister.collector.config.FilterConfig;
 import com.chuhui.primeminister.collector.config.PrimeMinisterConfig;
 import com.chuhui.primeminister.collector.network.PrimeMinisterNetworkClient;
-import com.chuhui.primeminister.collector.plugin.AbstractPrimeMinisterPlugin;
 import com.chuhui.primeminister.collector.plugin.PrimeMinisterPluginSpecification;
 import com.chuhui.primeminister.collector.utils.CollectionsUtils;
 import com.chuhui.primeminister.collector.utils.StatisticsLoadedClassCyzi;
@@ -14,7 +13,6 @@ import java.lang.instrument.IllegalClassFormatException;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 

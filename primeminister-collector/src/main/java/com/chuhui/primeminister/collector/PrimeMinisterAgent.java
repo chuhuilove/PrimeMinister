@@ -1,8 +1,8 @@
 package com.chuhui.primeminister.collector;
 
-import com.chuhui.primeminister.collector.plugin.AbstractPrimeMinisterPlugin;
 import com.chuhui.primeminister.collector.config.PrimeMinisterPluginConfig;
 import com.chuhui.primeminister.collector.plugin.PrimeMinisterPluginSpecification;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
@@ -20,14 +20,17 @@ import java.util.Set;
  * @Date: 6/9/22
  * @Description:
  */
+@Slf4j
 public class PrimeMinisterAgent {
 
     public static void premain(String agentArgs, Instrumentation inst) {
 
+        log.info("start PrimeMinister Agent");
+
         final List<PrimeMinisterPluginSpecification> supportedPlugins = loadSupportedPlugins();
 
         PrimeMinisterClassFileTransformer classFileTransformer = new PrimeMinisterClassFileTransformer(supportedPlugins);
-        inst.addTransformer(classFileTransformer);
+        inst.addTransformer(classFileTransformer,true);
     }
 
     public static List<PrimeMinisterPluginSpecification> loadSupportedPlugins() {
