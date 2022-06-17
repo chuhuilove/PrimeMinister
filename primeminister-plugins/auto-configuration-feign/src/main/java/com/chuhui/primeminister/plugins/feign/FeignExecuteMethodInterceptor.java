@@ -8,6 +8,7 @@ import feign.Request;
 import javassist.CannotCompileException;
 import javassist.CtBehavior;
 import javassist.CtMethod;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,6 +23,7 @@ import java.util.UUID;
  * @Date: 6/9/22
  * @Description:
  */
+@Slf4j
 public class FeignExecuteMethodInterceptor extends AbstractMethodInterceptor {
 
 

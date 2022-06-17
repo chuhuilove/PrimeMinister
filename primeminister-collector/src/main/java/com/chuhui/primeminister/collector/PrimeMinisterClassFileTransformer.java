@@ -7,6 +7,7 @@ import com.chuhui.primeminister.collector.plugin.PrimeMinisterPluginSpecificatio
 import com.chuhui.primeminister.collector.utils.CollectionsUtils;
 import com.chuhui.primeminister.collector.utils.StatisticsLoadedClassCyzi;
 import com.chuhui.primeminister.collector.utils.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
@@ -23,6 +24,7 @@ import java.util.Set;
  * @Date: 6/9/22
  * @Description:
  */
+@Slf4j
 public class PrimeMinisterClassFileTransformer implements ClassFileTransformer {
 
     private final static byte[] NO_TRANSFORMED = null;
@@ -34,6 +36,8 @@ public class PrimeMinisterClassFileTransformer implements ClassFileTransformer {
     private final Set<String> forbidTransformedPackageNames = new HashSet<>();
 
     public PrimeMinisterClassFileTransformer(List<PrimeMinisterPluginSpecification> supportedPlugins) {
+
+        log.info("PrimeMinisterClassFileTransformer init:{}",supportedPlugins);
 
         supportedPluginSpecifications = new ArrayList<>(supportedPlugins.size());
         supportedPluginSpecifications.addAll(supportedPlugins);
@@ -69,8 +73,7 @@ public class PrimeMinisterClassFileTransformer implements ClassFileTransformer {
             for (PrimeMinisterPluginSpecification plugin : supportedPluginSpecifications) {
                 if (plugin.isSupported(classHolder)) {
                     // 一个class只允许织入一次
-                    System.err.println("本次允许的类:" + classHolder);
-
+                   log.info("本次允许的类:{}",classHolder);
                     return plugin.customizationByteCode(classHolder);
                 }
             }

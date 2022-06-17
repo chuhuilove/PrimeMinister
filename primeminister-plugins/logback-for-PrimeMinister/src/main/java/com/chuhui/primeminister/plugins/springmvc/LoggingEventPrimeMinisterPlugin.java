@@ -23,14 +23,7 @@ public class LoggingEventPrimeMinisterPlugin extends AbstractPrimeMinisterPlugin
     @Override
     protected boolean matchPlugin(TransformClassDefinition classDefinition) {
 
-        CtClass ctClass = classDefinition.getCtClass();
-        boolean matched=targetClazz.getName().equals(classDefinition.getOriginalClassInfoHolder().getClassName());
-
-        if(matched){
-            System.err.println("matched "+targetClazz.getName());
-        }
-
-        return  matched;
+        return  false;
     }
 
     @Override

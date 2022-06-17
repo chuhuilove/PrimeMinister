@@ -54,10 +54,10 @@ public class PrimeMinisterNetworkClient {
 
                         if (channelFuture.isSuccess()) {
                             channel = channelFuture.channel();
-                            System.err.println("连接到服务端成功,host:" + host + ",port:" + port);
+                            log.info("connected to server succeed, remote host:{},port:{}.", host, port);
                         } else {
-                            System.err.println("创建连接失败");
-                            channelFuture.cause().printStackTrace();
+                            Throwable cause = channelFuture.cause();
+                            log.error("connected to server failed, remote host:{},port:{}.", host, port, cause);
                         }
                     }
                 });

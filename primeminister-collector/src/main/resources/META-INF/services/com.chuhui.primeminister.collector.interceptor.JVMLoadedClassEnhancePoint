@@ -1,0 +1,2 @@
+com.chuhui.primeminister.collector.logback.AppenderEnhancer
+com.chuhui.primeminister.collector.logback.ConsoleAppenderEnhancer

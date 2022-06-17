@@ -1,8 +1,10 @@
 package com.chuhui.primeminister.collector;
 
 import com.chuhui.primeminister.collector.config.PrimeMinisterPluginConfig;
+import com.chuhui.primeminister.collector.interceptor.JVMLoadedClassEnhancePoint;
 import com.chuhui.primeminister.collector.plugin.PrimeMinisterPluginSpecification;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
@@ -11,6 +13,7 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ServiceLoader;
 import java.util.Set;
 
 /**
@@ -25,12 +28,13 @@ public class PrimeMinisterAgent {
 
     public static void premain(String agentArgs, Instrumentation inst) {
 
-        log.info("start PrimeMinister Agent");
+        customizationJvmLoadedClass(inst);
+
+        log.info("run customizationJvmLoadedClass completed, start PrimeMinister Agent");
 
         final List<PrimeMinisterPluginSpecification> supportedPlugins = loadSupportedPlugins();
-
         PrimeMinisterClassFileTransformer classFileTransformer = new PrimeMinisterClassFileTransformer(supportedPlugins);
-        inst.addTransformer(classFileTransformer,true);
+        inst.addTransformer(classFileTransformer);
     }
 
     public static List<PrimeMinisterPluginSpecification> loadSupportedPlugins() {
@@ -46,7 +50,7 @@ public class PrimeMinisterAgent {
             }
             return verifyAndInstantiation(loadedPlugins);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("load supported plugin failed!", e);
         }
         return null;
     }
@@ -62,10 +66,25 @@ public class PrimeMinisterAgent {
                         plugins.add((PrimeMinisterPluginSpecification) clazz.newInstance());
                     }
                 } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-                    e.printStackTrace();
+                    log.error("verify and instantiation plugin failed,plugin class name:{}.", pluginClassName, e);
                 }
             }
         }
         return plugins;
     }
+
+
+    public static void customizationJvmLoadedClass(final Instrumentation instrumentation) {
+
+        Class[] loadedClasses = instrumentation.getAllLoadedClasses();
+        ServiceLoader<JVMLoadedClassEnhancePoint> loadedEnhancePoints = ServiceLoader.load(JVMLoadedClassEnhancePoint.class);
+        if (ArrayUtils.isNotEmpty(loadedClasses)) {
+
+            for (Class clazz : loadedClasses) {
+                loadedEnhancePoints.forEach(e -> e.enhanceLoadedClass(clazz, instrumentation));
+            }
+        }
+    }
+
+
 }

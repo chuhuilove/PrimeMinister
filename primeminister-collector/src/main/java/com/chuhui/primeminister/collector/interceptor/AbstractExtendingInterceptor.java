@@ -8,6 +8,7 @@ import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtField;
 import javassist.CtMethod;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import java.util.Map;
  * @Date: 6/13/22
  * @Description:
  */
+@Slf4j
 public class AbstractExtendingInterceptor implements ExtendingInterceptor {
     @Override
     public void extendingFiled(TransformClassDefinition definition, CtClass originalCtClass) {
@@ -29,8 +31,7 @@ public class AbstractExtendingInterceptor implements ExtendingInterceptor {
                 try {
                     originalCtClass.addField(extendedField.getKey(), extendedField.getValue());
                 } catch (CannotCompileException e) {
-                    System.err.println("增加字段出错");
-                    e.printStackTrace();
+                    log.error("add field failed!",e);
                 }
             }
         }
@@ -54,8 +55,7 @@ public class AbstractExtendingInterceptor implements ExtendingInterceptor {
                     }
 
                 } catch (CannotCompileException e) {
-                    System.err.println("增加方法出错");
-                    e.printStackTrace();
+                    log.error("add method failed!",e);
                 }
             }
         }
