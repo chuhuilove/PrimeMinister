@@ -5,6 +5,8 @@ import javassist.CtBehavior;
 import javassist.CtClass;
 import javassist.CtConstructor;
 import javassist.CtMethod;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -17,12 +19,15 @@ import java.util.Objects;
  * @Date: 6/9/22
  * @Description:
  */
+@Slf4j
 public abstract class AbstractMethodInterceptor implements MethodInterceptor {
 
-    protected final static String METHOD_LOGIC_TEMPLATE = "{ try{ %s; }catch(Exception e){e.printStackTrace();} }";
+    protected final static String METHOD_LOGIC_TEMPLATE = "{ try{ %s; }catch(Exception e){ com.chuhui.primeminister.collector.interceptor.AbstractMethodInterceptor.handleException(e);} }";
 
     @Override
     public List<CtBehavior> supportedBehavior(final TransformClassDefinition definition) {
+
+
         CtClass ctClass = definition.getCtClass();
         CtBehavior[] allBehaviors = ctClass.getDeclaredBehaviors();
 
@@ -65,5 +70,9 @@ public abstract class AbstractMethodInterceptor implements MethodInterceptor {
 
     protected abstract void setBehaviorLogic(final TransformClassDefinition definition, CtBehavior behavior);
 
+
+    public static void handleException(final Throwable throwable) {
+          log.error("invoke customization logic error.",throwable);
+    }
 
 }

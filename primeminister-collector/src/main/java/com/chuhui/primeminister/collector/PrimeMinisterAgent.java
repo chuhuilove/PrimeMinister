@@ -33,8 +33,12 @@ public class PrimeMinisterAgent {
         log.info("run customizationJvmLoadedClass completed, start PrimeMinister Agent");
 
         final List<PrimeMinisterPluginSpecification> supportedPlugins = loadSupportedPlugins();
+
+        // alibaba的ttl
+//        TtlAgent.premain(agentArgs,inst);
+
         PrimeMinisterClassFileTransformer classFileTransformer = new PrimeMinisterClassFileTransformer(supportedPlugins);
-        inst.addTransformer(classFileTransformer);
+        inst.addTransformer(classFileTransformer,true);
     }
 
     public static List<PrimeMinisterPluginSpecification> loadSupportedPlugins() {

@@ -18,9 +18,6 @@ public class DispatcherServletPrimeMinisterPlugin extends AbstractPrimeMinisterP
 
     private String supportedClassName = "org.springframework.web.servlet.DispatcherServlet";
 
-
-
-
     @Override
     public List<EnhancePoint> interceptorPoints() {
         return CollectionsUtils.newArrayList(new DispatcherServletDoDispatchMethodInterceptor());
@@ -30,7 +27,5 @@ public class DispatcherServletPrimeMinisterPlugin extends AbstractPrimeMinisterP
     protected boolean matchPlugin(TransformClassDefinition classDefinition) {
         return supportedClassName.equals(classDefinition.getOriginalClassInfoHolder().getClassName());
     }
-
-
 
 }

@@ -1,2 +1,3 @@
 com.chuhui.primeminister.collector.logback.AppenderEnhancer
 com.chuhui.primeminister.collector.logback.ConsoleAppenderEnhancer
+com.chuhui.primeminister.collector.jdk.JdkThreadPoolExecutorEnhancer

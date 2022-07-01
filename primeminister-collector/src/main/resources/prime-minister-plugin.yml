@@ -3,9 +3,7 @@
 
 
 
-
-
-pluginName: alibaba-ttl
+pluginName: alibaba-ttl-2.12.3
 definedPlugins:
     - com.chuhui.primeminister.collector.plugin.ttl.AlibabaTTLPrimeMinisterPlugin
 

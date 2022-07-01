@@ -24,7 +24,6 @@ import java.lang.instrument.UnmodifiableClassException;
 @Slf4j
 public class ConsoleAppenderEnhancer implements JVMLoadedClassEnhancePoint {
 
-
     @Override
     public void enhanceLoadedClass(Class<?> clazz, Instrumentation inst) {
 
