@@ -22,7 +22,7 @@
 
         <netty.version>4.1.77.Final</netty.version>
         <snakeyaml.version>1.23</snakeyaml.version>
-        <google-protobuf.version>3.17.3</google-protobuf.version>
+        <google-protobuf.version>3.19.6</google-protobuf.version>
         <spring-boot.version>2.1.9.RELEASE.cyzi</spring-boot.version>
         <prime-minister.version>1.0</prime-minister.version>
 
